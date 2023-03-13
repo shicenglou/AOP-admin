@@ -1,0 +1,32 @@
+server:
+  port: 7003
+  servlet:
+    context-path: /AOP
+    encoding:
+      enabled: true
+      force: true
+      charset: UTF-8
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: AOP
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/aquaponicsweapp?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: Wanshiqi123!
+
+
+#????
+logging:
+  level:
+    com.example: debug
+    org.springframework.jdbc.core.JdbcTemplate: error
+    org.springframework.jdbc.core.StatementCreatorUtils: Trace
+
+mybatis-plus:
+  configuration:
+    #  关闭sql输出
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
