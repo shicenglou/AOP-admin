@@ -9,11 +9,7 @@ import com.example.aopadmin.model.Result;
 import com.example.aopadmin.service.AvgEnvironmentService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,8 +33,8 @@ public class AvgEnvironmentController {
 
     private final List<String> cols = Arrays.asList("temp","hum","co2","light");
 
-    @GetMapping("/table")
-    public Result getTable(@RequestParam String sheetName , @RequestParam(required = false) String dataTime){
+    @GetMapping("/table/{sheetName}")
+    public Result getTable(@PathVariable(value = "sheetName") String sheetName , @RequestParam(required = false) String dataTime){
         DateTime time = null;
         if (StringUtils.isNotBlank(dataTime)){
             time = DateUtil.parse(dataTime,"yyyy-MM-dd HH:mm:ss");
