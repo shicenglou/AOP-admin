@@ -19,5 +19,7 @@ import java.util.List;
 @Mapper
 public interface AvgEnvironmentMapper extends BaseMapper<AvgEnvironment> {
 
-    List<HashMap<String, String>> getTable(String sheetName, DateTime time, DateTime minTime);
+    List<HashMap<String, Object>> getTable(String sheetName, DateTime time, DateTime minTime);
+
+    Integer getAllCount();
 }

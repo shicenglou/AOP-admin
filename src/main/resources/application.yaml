@@ -31,3 +31,6 @@ mybatis-plus:
   configuration:
     #  关闭sql输出
     log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+    #   开启sql输出
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath*:com/example/aopadmin/mapper/**/*.xml

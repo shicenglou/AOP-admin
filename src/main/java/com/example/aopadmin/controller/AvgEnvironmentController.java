@@ -3,6 +3,7 @@ package com.example.aopadmin.controller;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import com.example.aopadmin.mapper.AvgEnvironmentMapper;
 import com.example.aopadmin.model.PowerTable;
 import com.example.aopadmin.model.Result;
 import com.example.aopadmin.service.AvgEnvironmentService;
@@ -32,6 +33,8 @@ public class AvgEnvironmentController {
 
     private final AvgEnvironmentService avgEnvironmentService;
 
+    private final AvgEnvironmentMapper mapper;
+
     private final List<String> cols = Arrays.asList("temp","hum","co2","light");
 
     @GetMapping("/table")
@@ -49,6 +52,11 @@ public class AvgEnvironmentController {
             return Result.ok(powers);
         }
         return Result.error("y 值错误,或时间格式非法");
+    }
+
+    @GetMapping("test")
+    public Result getCount(){
+        return Result.ok(mapper.getAllCount());
     }
 
 }

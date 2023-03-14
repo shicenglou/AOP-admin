@@ -32,22 +32,23 @@ public class AvgEnvironmentServiceImpl extends ServiceImpl<AvgEnvironmentMapper,
     private final AvgEnvironmentMapper avgEnvironmentMapper;
     @Override
     public List<PowerTable> getTable(String sheetName, DateTime time, DateTime minTime) {
-        List<PowerTable> value = changeData("time",sheetName,avgEnvironmentMapper.getTable(sheetName,time,minTime));
+        List<HashMap<String, Object>> table = avgEnvironmentMapper.getTable(sheetName, time, minTime);
+        table.forEach(System.out::println);
+        List<PowerTable> value = changeData("time",sheetName,table);
         value.sort((o1, o2) -> DateUtil.compare(DateUtil.parse(o1.getX(),"yyyy-MM-dd HH:mm:ss"),DateUtil.parse(o2.getX(),"yyyy-MM-dd HH:mm:ss")));
         return value;
     }
 
-    public List<PowerTable> changeData(String xName,String yName,List<HashMap<String,String>> data){
+    public List<PowerTable> changeData(String xName,String yName,List<HashMap<String,Object>> data){
         List<PowerTable> value = new ArrayList<>();
-        for (HashMap<String, String> datum : data) {
+        for (HashMap<String, Object> datum : data) {
 
-            String s = datum.get(yName);
-            if (NumEx.isNumber(s)){
-                PowerTable table = new PowerTable();
-                table.setX(datum.get(xName));
-                table.setY(Double.valueOf(s));
-                value.add(table);
-            }
+            Double s = (Double) datum.get(yName);
+            datum.get(xName);
+            PowerTable table = new PowerTable();
+            table.setX(datum.get(xName).toString());
+            table.setY(s);
+            value.add(table);
 
         }
         return value;
