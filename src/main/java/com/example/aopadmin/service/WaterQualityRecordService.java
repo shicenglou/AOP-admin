@@ -1,7 +1,10 @@
 package com.example.aopadmin.service;
 
+import com.example.aopadmin.entity.AvgWater;
 import com.example.aopadmin.entity.WaterQualityRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface WaterQualityRecordService extends IService<WaterQualityRecord> {
 
+    AvgWater avgWater(List<WaterQualityRecord> waterQualityRecords);
 }
