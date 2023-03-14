@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.aopadmin.entity.EnvironmentRecord;
+import com.example.aopadmin.model.PowerTable;
 import com.example.aopadmin.model.Result;
 import com.example.aopadmin.service.EnvironmentRecordService;
 import com.example.aopadmin.util.DateEx;
@@ -42,6 +43,8 @@ import java.util.stream.Collectors;
 @Api(tags = "环境数据接口")
 @Slf4j
 public class EnvironmentRecordController {
+
+
 
     @Autowired
     private EnvironmentRecordService environmentRecordService;
@@ -243,5 +246,6 @@ public class EnvironmentRecordController {
         result.put("time",time);
         return Result.ok(result);
     }
+
 }
 

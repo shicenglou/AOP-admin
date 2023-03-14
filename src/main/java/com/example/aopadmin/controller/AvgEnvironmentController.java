@@ -1,9 +1,21 @@
 package com.example.aopadmin.controller;
 
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import com.example.aopadmin.model.PowerTable;
+import com.example.aopadmin.model.Result;
+import com.example.aopadmin.service.AvgEnvironmentService;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p>
@@ -14,8 +26,30 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2023-03-14
  */
 @RestController
-@RequestMapping("/aopadmin/avg-environment")
+@RequestMapping("/avgEnv")
+@RequiredArgsConstructor
 public class AvgEnvironmentController {
+
+    private final AvgEnvironmentService avgEnvironmentService;
+
+    private final List<String> cols = Arrays.asList("temp","hum","co2","light");
+
+    @GetMapping("/table")
+    public Result getTable(@RequestParam String sheetName , @RequestParam(required = false) String dataTime){
+        DateTime time = null;
+        if (StringUtils.isNotBlank(dataTime)){
+            time = DateUtil.parse(dataTime,"yyyy-MM-dd HH:mm:ss");
+        }else {
+            time = new DateTime();
+        }
+        DateTime minTime = DateUtil.offsetDay(time, -1);
+        if (cols.contains(sheetName)){
+            List<PowerTable> powers = avgEnvironmentService.getTable(sheetName,time,minTime);
+            if (powers.isEmpty()) return Result.error("该时间无数据");
+            return Result.ok(powers);
+        }
+        return Result.error("y 值错误,或时间格式非法");
+    }
 
 }
 

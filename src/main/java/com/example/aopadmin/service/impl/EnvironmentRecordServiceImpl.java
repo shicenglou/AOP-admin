@@ -1,8 +1,10 @@
 package com.example.aopadmin.service.impl;
 
+import cn.hutool.core.date.DateTime;
 import com.example.aopadmin.entity.AvgEnvironment;
 import com.example.aopadmin.entity.EnvironmentRecord;
 import com.example.aopadmin.mapper.EnvironmentRecordMapper;
+import com.example.aopadmin.model.PowerTable;
 import com.example.aopadmin.service.EnvironmentRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.aopadmin.util.NumOperaUtil;
@@ -11,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EnvironmentRecordServiceImpl extends ServiceImpl<EnvironmentRecordMapper, EnvironmentRecord> implements EnvironmentRecordService {
 
+    private final EnvironmentRecordMapper environmentRecordMapper;
     @Override
     public AvgEnvironment avgEnv(List<EnvironmentRecord> environmentRecords) {
         AvgEnvironment value = new AvgEnvironment();

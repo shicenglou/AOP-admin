@@ -19,7 +19,7 @@ import java.net.UnknownHostException;
 @SpringBootApplication
 @Slf4j
 @EnableScheduling
-@MapperScan({"om.example.aopadmin.mapper"})
+@MapperScan(basePackages = "com.example.aopadmin.mapper")
 public class AopAdminApplication {
 
     public static void main(String[] args) throws UnknownHostException {
