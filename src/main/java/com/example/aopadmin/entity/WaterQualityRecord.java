@@ -6,6 +6,8 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -39,6 +41,10 @@ public class WaterQualityRecord implements Serializable {
 
     @TableField("do")
     private String do1;
+
+    public boolean isFail(){
+        return (StringUtils.isBlank(temp) && StringUtils.isBlank(ph) && StringUtils.isBlank(do1));
+    }
 
 
 }

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -53,6 +55,11 @@ public class EnvironmentRecord implements Serializable {
 
     @ApiModelProperty(value = "更新时间")
     private Date updateTime;
+
+    public boolean isFail(){
+        return  (StringUtils.isBlank(co2) && StringUtils.isBlank(light) && StringUtils.isBlank(temp) && StringUtils.isBlank(hum)
+        && StringUtils.isBlank(beep) && StringUtils.isBlank(led));
+    }
 
 
 }
