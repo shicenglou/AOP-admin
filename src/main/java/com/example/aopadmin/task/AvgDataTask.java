@@ -8,6 +8,7 @@ import com.example.aopadmin.entity.AvgWater;
 import com.example.aopadmin.entity.EnvironmentRecord;
 import com.example.aopadmin.entity.WaterQualityRecord;
 import com.example.aopadmin.service.AvgEnvironmentService;
+import com.example.aopadmin.service.AvgWaterService;
 import com.example.aopadmin.service.EnvironmentRecordService;
 import com.example.aopadmin.service.WaterQualityRecordService;
 import lombok.Data;
@@ -29,16 +30,22 @@ public class AvgDataTask {
 
     private final AvgEnvironmentService avgEnvironmentService;
 
+    private final AvgWaterService avgWaterService;
+
     @Scheduled(cron = "0 0 0/1 * * ?")
-    public void avgDailyData(){
-        Time.sleep(10);
+    public void avgDailyData() throws InterruptedException {
+
+//        Thread.sleep(10);
         //整点执行数据录入，录入上小时均值
-        DateTime end = DateUtil.date();
-        DateTime start = DateUtil.offsetHour(end, 1);
+        dataToAvg(new DateTime());
+    }
+
+    public void dataToAvg(DateTime dateTime){
+        DateTime start = DateUtil.offsetHour(dateTime, -1);
 
         List<EnvironmentRecord> environmentRecords = environmentRecordService.list(new LambdaQueryWrapper<EnvironmentRecord>()
                 .ge(EnvironmentRecord::getTime, start)
-                .le(EnvironmentRecord::getTime, end));
+                .le(EnvironmentRecord::getTime, dateTime));
         if (!environmentRecords.isEmpty()){
             AvgEnvironment avgEnvironment = environmentRecordService.avgEnv(environmentRecords);
             avgEnvironment.setTime(start);
@@ -47,9 +54,11 @@ public class AvgDataTask {
 
         List<WaterQualityRecord> waterQualityRecords = waterQualityRecordService.list(new LambdaQueryWrapper<WaterQualityRecord>()
                 .ge(WaterQualityRecord::getTime, start)
-                .le(WaterQualityRecord::getTime, end));
+                .le(WaterQualityRecord::getTime, dateTime));
         if (!waterQualityRecords.isEmpty()){
             AvgWater avgWater = waterQualityRecordService.avgWater(waterQualityRecords);
+            avgWater.setTime(start);
+            if (!avgWater.isFail()) avgWaterService.save(avgWater);
         }
     }
 }

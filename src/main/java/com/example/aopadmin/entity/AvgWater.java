@@ -44,5 +44,8 @@ public class AvgWater implements Serializable {
     @ApiModelProperty(value = "对应时间")
     private Date time;
 
+    public boolean isFail(){
+        return temp == null && ph == null && do1 == null;
+    }
 
 }
