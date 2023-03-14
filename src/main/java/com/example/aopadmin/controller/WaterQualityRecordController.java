@@ -1,8 +1,11 @@
 package com.example.aopadmin.controller;
 
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
+import com.example.aopadmin.entity.EnvironmentRecord;
 import com.example.aopadmin.entity.WaterQualityRecord;
 import com.example.aopadmin.model.Result;
 import com.example.aopadmin.service.WaterQualityRecordService;
@@ -143,6 +146,80 @@ public class WaterQualityRecordController {
             temp.add(0.0);
             ph.add(0.0);
         }
+    }
+
+    @GetMapping("/getWaterMonthHistory")
+    @ApiOperation(value = "获取水质前30日平均数据", httpMethod = "GET")
+    public Result getWaterMonthHistory() {
+        DateTime endOfDate = DateUtil.date();
+        DateTime beginOfDay = DateUtil.offsetDay(endOfDate, -30);
+        List<WaterQualityRecord> waterList = waterQualityRecordService.list(new LambdaQueryWrapper<WaterQualityRecord>()
+                .ge(WaterQualityRecord::getTime, beginOfDay)
+                .le(WaterQualityRecord::getTime, endOfDate));
+
+        List<Double> phs = new ArrayList<>();
+        List<Double> temps = new ArrayList<>();
+        List<Double> dos = new ArrayList<>();
+        List<String> time = new ArrayList<>();
+        for (DateTime dateTime = beginOfDay; dateTime.compareTo(endOfDate) <= 0 ; dateTime = DateUtil.offsetDay(dateTime, 1)) {
+            DateTime finalDateTime = dateTime;
+            time.add(DateUtil.format(finalDateTime, "MM/dd"));
+            double ph = waterList.stream().filter(env -> DateUtil.isSameDay(env.getTime(), finalDateTime) && NumEx.isNumber(env.getPh()))
+                    .mapToDouble(item -> Double.valueOf(item.getPh()))
+                    .average().orElse(0.0);
+            phs.add(ph);
+            double temp = waterList.stream().filter(env -> DateUtil.isSameDay(env.getTime(), finalDateTime) && NumEx.isNumber(env.getTemp()))
+                    .mapToDouble(item -> Double.valueOf(item.getTemp()))
+                    .average().orElse(0.0);
+            temps.add(temp);
+            double do1 = waterList.stream().filter(env -> DateUtil.isSameDay(env.getTime(), finalDateTime) && NumEx.isNumber(env.getDo1()))
+                    .mapToDouble(item -> Double.valueOf(item.getDo1()))
+                    .average().orElse(0.0);
+            dos.add(do1);
+        }
+        HashMap<String, List> result = new HashMap<>(4);
+        result.put("ph",phs);
+        result.put("do",dos);
+        result.put("temp",temps);
+        result.put("time",time);
+        return Result.ok(result);
+    }
+
+    @GetMapping("/getWaterDayHistory")
+    @ApiOperation(value = "获取水质前24小时平均数据", httpMethod = "GET")
+    public Result getWaterDayHistory() {
+        DateTime endOfDate = DateUtil.date();
+        DateTime beginOfDay = DateUtil.offsetHour(endOfDate, -24);
+        List<WaterQualityRecord> waterList = waterQualityRecordService.list(new LambdaQueryWrapper<WaterQualityRecord>()
+                .ge(WaterQualityRecord::getTime, beginOfDay)
+                .le(WaterQualityRecord::getTime, endOfDate));
+
+        List<Double> phs = new ArrayList<>();
+        List<Double> temps = new ArrayList<>();
+        List<Double> dos = new ArrayList<>();
+        List<String> time = new ArrayList<>();
+        for (DateTime dateTime = beginOfDay; dateTime.compareTo(endOfDate) <= 0 ; dateTime = DateUtil.offsetHour(dateTime, 1)) {
+            DateTime finalDateTime = dateTime;
+            time.add(DateUtil.format(finalDateTime, "HH:00"));
+            double ph = waterList.stream().filter(env -> DateUtil.isSameDay(env.getTime(), finalDateTime) && NumEx.isNumber(env.getPh()))
+                    .mapToDouble(item -> Double.valueOf(item.getPh()))
+                    .average().orElse(0.0);
+            phs.add(ph);
+            double temp = waterList.stream().filter(env -> DateUtil.isSameDay(env.getTime(), finalDateTime) && NumEx.isNumber(env.getTemp()))
+                    .mapToDouble(item -> Double.valueOf(item.getTemp()))
+                    .average().orElse(0.0);
+            temps.add(temp);
+            double do1 = waterList.stream().filter(env -> DateUtil.isSameDay(env.getTime(), finalDateTime) && NumEx.isNumber(env.getDo1()))
+                    .mapToDouble(item -> Double.valueOf(item.getDo1()))
+                    .average().orElse(0.0);
+            dos.add(do1);
+        }
+        HashMap<String, List> result = new HashMap<>(4);
+        result.put("ph",phs);
+        result.put("do",dos);
+        result.put("temp",temps);
+        result.put("time",time);
+        return Result.ok(result);
     }
 
 }

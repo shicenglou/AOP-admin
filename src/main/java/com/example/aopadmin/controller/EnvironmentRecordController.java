@@ -1,6 +1,10 @@
 package com.example.aopadmin.controller;
 
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.aopadmin.entity.EnvironmentRecord;
 import com.example.aopadmin.model.Result;
@@ -154,5 +158,90 @@ public class EnvironmentRecordController {
         }
     }
 
+    @GetMapping("/getEnvMonthHistory")
+    @ApiOperation(value = "获取环境前30日平均数据", httpMethod = "GET")
+    public Result getEnvMonthHistory() {
+        DateTime endOfDate = DateUtil.date();
+        DateTime beginOfDay = DateUtil.offsetDay(endOfDate, -30);
+        List<EnvironmentRecord> envList = environmentRecordService.list(new LambdaQueryWrapper<EnvironmentRecord>()
+                .ge(EnvironmentRecord::getUpdateTime, beginOfDay)
+                .le(EnvironmentRecord::getUpdateTime, endOfDate));
+
+        List<Double> hums = new ArrayList<>();
+        List<Double> lights = new ArrayList<>();
+        List<Double> temps = new ArrayList<>();
+        List<Double> co2s = new ArrayList<>();
+        List<String> time = new ArrayList<>();
+        for (DateTime dateTime = beginOfDay; dateTime.compareTo(endOfDate) <= 0 ; dateTime = DateUtil.offsetDay(dateTime, 1)) {
+            DateTime finalDateTime = dateTime;
+            time.add(DateUtil.format(finalDateTime, "MM/dd"));
+            double hum = envList.stream().filter(env -> DateUtil.isSameDay(env.getUpdateTime(), finalDateTime) && NumEx.isNumber(env.getHum()))
+                    .mapToDouble(item -> Double.valueOf(item.getHum()))
+                    .average().orElse(0.0);
+            hums.add(hum);
+            double temp = envList.stream().filter(env -> DateUtil.isSameDay(env.getUpdateTime(), finalDateTime) && NumEx.isNumber(env.getTemp()))
+                    .mapToDouble(item -> Double.valueOf(item.getTemp()))
+                    .average().orElse(0.0);
+            temps.add(temp);
+            double light = envList.stream().filter(env -> DateUtil.isSameDay(env.getUpdateTime(), finalDateTime) && NumEx.isNumber(env.getLight()))
+                    .mapToDouble(item -> Double.valueOf(item.getLight()))
+                    .average().orElse(0.0);
+            lights.add(light);
+            double co2 = envList.stream().filter(env -> DateUtil.isSameDay(env.getUpdateTime(), finalDateTime) && NumEx.isNumber(env.getCo2()))
+                    .mapToDouble(item -> Double.valueOf(item.getCo2()))
+                    .average().orElse(0.0);
+            co2s.add(co2);
+        }
+        HashMap<String, List> result = new HashMap<>(5);
+        result.put("hum",hums);
+        result.put("light",lights);
+        result.put("temp",temps);
+        result.put("co2",co2s);
+        result.put("time",time);
+        return Result.ok(result);
+    }
+
+    @GetMapping("/getEnvDayHistory")
+    @ApiOperation(value = "获取环境前24小时平均数据", httpMethod = "GET")
+    public Result getEnvDayHistory() {
+        DateTime endOfDate = DateUtil.date();
+        DateTime beginOfDay = DateUtil.offsetHour(endOfDate, -24);
+        List<EnvironmentRecord> envList = environmentRecordService.list(new LambdaQueryWrapper<EnvironmentRecord>()
+                .ge(EnvironmentRecord::getUpdateTime, beginOfDay)
+                .le(EnvironmentRecord::getUpdateTime, endOfDate));
+
+        List<Double> hums = new ArrayList<>();
+        List<Double> lights = new ArrayList<>();
+        List<Double> temps = new ArrayList<>();
+        List<Double> co2s = new ArrayList<>();
+        List<String> time = new ArrayList<>();
+        for (DateTime dateTime = beginOfDay; dateTime.compareTo(endOfDate) <= 0 ; dateTime = DateUtil.offsetHour(dateTime, 1)) {
+            DateTime finalDateTime = dateTime;
+            time.add(DateUtil.format(finalDateTime, "HH:00"));
+            double hum = envList.stream().filter(env -> DateUtil.isSameDay(env.getUpdateTime(), finalDateTime) && NumEx.isNumber(env.getHum()))
+                    .mapToDouble(item -> Double.valueOf(item.getHum()))
+                    .average().orElse(0.0);
+            hums.add(hum);
+            double temp = envList.stream().filter(env -> DateUtil.isSameDay(env.getUpdateTime(), finalDateTime) && NumEx.isNumber(env.getTemp()))
+                    .mapToDouble(item -> Double.valueOf(item.getTemp()))
+                    .average().orElse(0.0);
+            temps.add(temp);
+            double light = envList.stream().filter(env -> DateUtil.isSameDay(env.getUpdateTime(), finalDateTime) && NumEx.isNumber(env.getLight()))
+                    .mapToDouble(item -> Double.valueOf(item.getLight()))
+                    .average().orElse(0.0);
+            lights.add(light);
+            double co2 = envList.stream().filter(env -> DateUtil.isSameDay(env.getUpdateTime(), finalDateTime) && NumEx.isNumber(env.getCo2()))
+                    .mapToDouble(item -> Double.valueOf(item.getCo2()))
+                    .average().orElse(0.0);
+            co2s.add(co2);
+        }
+        HashMap<String, List> result = new HashMap<>(5);
+        result.put("hum",hums);
+        result.put("light",lights);
+        result.put("temp",temps);
+        result.put("co2",co2s);
+        result.put("time",time);
+        return Result.ok(result);
+    }
 }
 
