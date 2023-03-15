@@ -8,6 +8,7 @@ import com.example.aopadmin.model.PowerTable;
 import com.example.aopadmin.service.AvgEnvironmentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.aopadmin.util.NumEx;
+import com.example.aopadmin.util.TableUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.unit.DataUnit;
@@ -33,24 +34,9 @@ public class AvgEnvironmentServiceImpl extends ServiceImpl<AvgEnvironmentMapper,
     @Override
     public List<PowerTable> getTable(String sheetName, DateTime time, DateTime minTime) {
         List<HashMap<String, Object>> table = avgEnvironmentMapper.getTable(sheetName, time, minTime);
-        table.forEach(System.out::println);
-        List<PowerTable> value = changeData("time",sheetName,table);
+        List<PowerTable> value = TableUtil.changeData("time",sheetName,table);
         value.sort((o1, o2) -> DateUtil.compare(DateUtil.parse(o1.getX(),"yyyy-MM-dd HH:mm:ss"),DateUtil.parse(o2.getX(),"yyyy-MM-dd HH:mm:ss")));
         return value;
     }
 
-    public List<PowerTable> changeData(String xName,String yName,List<HashMap<String,Object>> data){
-        List<PowerTable> value = new ArrayList<>();
-        for (HashMap<String, Object> datum : data) {
-
-            Double s = (Double) datum.get(yName);
-            datum.get(xName);
-            PowerTable table = new PowerTable();
-            table.setX(datum.get(xName).toString());
-            table.setY(s);
-            value.add(table);
-
-        }
-        return value;
-    }
 }

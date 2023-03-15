@@ -2,4 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.aopadmin.mapper.AvgWaterMapper">
 
+    <select id="getTable" resultType="java.util.HashMap" >
+        SELECT ${sheetName},time FROM `avg_water` WHERE time <![CDATA[<=]]>  #{time} and time <![CDATA[>]]> #{minTime}
+    </select>
 </mapper>
