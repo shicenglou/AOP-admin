@@ -38,6 +38,9 @@ public class AvgWaterController {
             DateTime minTime = DateUtil.offsetDay(parse, -1);
             List<PowerTable> powers = waterService.getTable(sheetName,parse,minTime);
             if (powers.isEmpty()) return Result.error("该时间无数据");
+            for (PowerTable power : powers) {
+                power.setY(Double.parseDouble(String.format("%.2f", power.getY())));
+            }
             return Result.ok(powers);
         }
         return Result.error("y 值错误,或时间格式非法");
