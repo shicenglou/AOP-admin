@@ -87,11 +87,11 @@ public class PlantsRecordController {
         for (DateTime dateTime = beginOfDay; dateTime.compareTo(endOfDate) <= 0 ; dateTime = DateUtil.offsetHour(dateTime, 1)) {
             DateTime finalDateTime = dateTime;
             time.add(DateUtil.format(finalDateTime, "HH:00"));
-            double height = plantsList.stream().filter(env -> DateUtil.isSameDay(env.getTime(), finalDateTime) && NumEx.isNumber(env.getHeight()))
+            double height = plantsList.stream().filter(env -> DateUtil.isIn(env.getTime(), finalDateTime, DateUtil.offsetDay(finalDateTime, 1)) && NumEx.isNumber(env.getHeight()))
                     .mapToDouble(item -> Double.valueOf(item.getHeight()))
                     .average().orElse(0.0);
             heights.add(height);
-            double width = plantsList.stream().filter(env -> DateUtil.isSameDay(env.getTime(), finalDateTime) && NumEx.isNumber(env.getWidth()))
+            double width = plantsList.stream().filter(env -> DateUtil.isIn(env.getTime(), finalDateTime, DateUtil.offsetDay(finalDateTime, 1)) && NumEx.isNumber(env.getWidth()))
                     .mapToDouble(item -> Double.valueOf(item.getWidth()))
                     .average().orElse(0.0);
             widths.add(width);

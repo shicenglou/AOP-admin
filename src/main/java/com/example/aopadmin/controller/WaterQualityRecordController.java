@@ -164,15 +164,15 @@ public class WaterQualityRecordController {
         for (DateTime dateTime = beginOfDay; dateTime.compareTo(endOfDate) <= 0 ; dateTime = DateUtil.offsetDay(dateTime, 1)) {
             DateTime finalDateTime = dateTime;
             time.add(DateUtil.format(finalDateTime, "MM/dd"));
-            double ph = waterList.stream().filter(env -> DateUtil.isSameDay(env.getTime(), finalDateTime) && NumEx.isNumber(env.getPh()))
+            double ph = waterList.stream().filter(env -> DateUtil.isIn(env.getTime(), finalDateTime, DateUtil.offsetDay(finalDateTime, 1)) && NumEx.isNumber(env.getPh()))
                     .mapToDouble(item -> Double.valueOf(item.getPh()))
                     .average().orElse(0.0);
             phs.add(ph);
-            double temp = waterList.stream().filter(env -> DateUtil.isSameDay(env.getTime(), finalDateTime) && NumEx.isNumber(env.getTemp()))
+            double temp = waterList.stream().filter(env -> DateUtil.isIn(env.getTime(), finalDateTime, DateUtil.offsetDay(finalDateTime, 1)) && NumEx.isNumber(env.getTemp()))
                     .mapToDouble(item -> Double.valueOf(item.getTemp()))
                     .average().orElse(0.0);
             temps.add(temp);
-            double do1 = waterList.stream().filter(env -> DateUtil.isSameDay(env.getTime(), finalDateTime) && NumEx.isNumber(env.getDo1()))
+            double do1 = waterList.stream().filter(env -> DateUtil.isIn(env.getTime(), finalDateTime, DateUtil.offsetDay(finalDateTime, 1)) && NumEx.isNumber(env.getDo1()))
                     .mapToDouble(item -> Double.valueOf(item.getDo1()))
                     .average().orElse(0.0);
             dos.add(do1);

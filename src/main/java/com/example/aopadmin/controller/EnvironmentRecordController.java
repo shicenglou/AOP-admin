@@ -221,19 +221,19 @@ public class EnvironmentRecordController {
         for (DateTime dateTime = beginOfDay; dateTime.compareTo(endOfDate) <= 0 ; dateTime = DateUtil.offsetHour(dateTime, 1)) {
             DateTime finalDateTime = dateTime;
             time.add(DateUtil.format(finalDateTime, "HH:00"));
-            double hum = envList.stream().filter(env -> DateUtil.isSameDay(env.getUpdateTime(), finalDateTime) && NumEx.isNumber(env.getHum()))
+            double hum = envList.stream().filter(env -> DateUtil.isIn(env.getUpdateTime(), finalDateTime, DateUtil.offsetHour(finalDateTime, 1)) && NumEx.isNumber(env.getHum()))
                     .mapToDouble(item -> Double.valueOf(item.getHum()))
                     .average().orElse(0.0);
             hums.add(hum);
-            double temp = envList.stream().filter(env -> DateUtil.isSameDay(env.getUpdateTime(), finalDateTime) && NumEx.isNumber(env.getTemp()))
+            double temp = envList.stream().filter(env -> DateUtil.isIn(env.getUpdateTime(), finalDateTime, DateUtil.offsetHour(finalDateTime, 1)) && NumEx.isNumber(env.getTemp()))
                     .mapToDouble(item -> Double.valueOf(item.getTemp()))
                     .average().orElse(0.0);
             temps.add(temp);
-            double light = envList.stream().filter(env -> DateUtil.isSameDay(env.getUpdateTime(), finalDateTime) && NumEx.isNumber(env.getLight()))
+            double light = envList.stream().filter(env -> DateUtil.isIn(env.getUpdateTime(), finalDateTime, DateUtil.offsetHour(finalDateTime, 1)) && NumEx.isNumber(env.getLight()))
                     .mapToDouble(item -> Double.valueOf(item.getLight()))
                     .average().orElse(0.0);
             lights.add(light);
-            double co2 = envList.stream().filter(env -> DateUtil.isSameDay(env.getUpdateTime(), finalDateTime) && NumEx.isNumber(env.getCo2()))
+            double co2 = envList.stream().filter(env -> DateUtil.isIn(env.getUpdateTime(), finalDateTime, DateUtil.offsetHour(finalDateTime, 1)) && NumEx.isNumber(env.getCo2()))
                     .mapToDouble(item -> Double.valueOf(item.getCo2()))
                     .average().orElse(0.0);
             co2s.add(co2);
