@@ -53,6 +53,12 @@ public class WaterQualityRecordController {
         return Result.ok("数据入库");
     }
 
+    @GetMapping
+    public Result getNew(){
+        WaterQualityRecord one = waterQualityRecordService.getOne(new LambdaQueryWrapper<WaterQualityRecord>().orderByDesc(WaterQualityRecord::getTime).last(" limit 1"));
+        return Result.ok(one);
+    }
+
     @GetMapping("/history")
     @ApiOperation(value = "获取历史数据", httpMethod = "GET")
     public Result getHistory(@RequestParam String startTime, @RequestParam String endTime, @RequestParam String target) throws ParseException {
